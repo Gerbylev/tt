@@ -10,8 +10,8 @@ def generate_students(count: int) -> list[Student]:
 
     for i in range(count - 1):
         student = Student(
-            id=i + 1,  # Идентификатор студента
-            full_name=fake.name(),  # Случайное полное имя
+            id=i + 1,
+            full_name=fake.name(),
             date_of_receipt=datetime.fromordinal(fake.date_between(start_date='-4y', end_date='today').toordinal())
         )
         students.append(student)

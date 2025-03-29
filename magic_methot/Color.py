@@ -37,6 +37,27 @@ class Color:
     def __rmul__(self, factor: Union[float, int]) -> "Color":
         return self.__mul__(factor)
 
+    def __lt__(self, other):
+        if not isinstance(other, Color):
+            return False
+        if self.red == other.red:
+            if self.green == other.green:
+                return self.blue < other.blue
+            return self.green < other.green
+        return self.red < other.red
+
+
+    def __gt__(self, other):
+        if not isinstance(other, Color):
+            return False
+        if self.red == other.red:
+            if self.green == other.green:
+                return self.blue > other.blue
+            return self.green > other.green
+        return self.red > other.red
+
+
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Color):
             return False
@@ -45,4 +66,8 @@ class Color:
     def __repr__(self) -> str:
         return f"Color({self.red}, {self.green}, {self.blue})"
 
+if __name__ == "__main__":
+    c1 = Color(201, 200, 100)
+    c2 = Color(201, 201, 100)
+    print(c1 > c2)
 

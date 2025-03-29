@@ -1,22 +1,29 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, TypeVar
 
+T = TypeVar('T')
 
 @dataclass
 class Product:
-    type: str
     name: str
     cost: float
 
     def __repr__(self) -> str:
-        return f"Продукт: {self.name}, Тип: {self.type}, Стоимость: {self.cost:.2f}"
+        return f"Продукт: {self.name}, , Стоимость: {self.cost:.2f}"
+
+class T1(Product):
+
+    def __init__(self, cost):
+        super().__init__("Смартфон", cost)
+
+class T2(Product):
+    def __init__(self, cost):
+        super().__init__("Пк", cost)
 
 
 class Order:
     def __init__(self):
-        self.discount: Optional[float] = None
         self.products: list[Product] = []
-        self.type_discount: dict[str, float] = {}
 
     def add_product(self, product: Product):
         self.products.append(product)
@@ -24,13 +31,13 @@ class Order:
     def set_discount(self, discount: float):
         self.discount = discount
 
-    def set_discount_by_type(self, discount: float, product_type: str):
-        self.type_discount[product_type] = discount
+    def set_discount_by_type(self, discount: float, name: str):
+        self.name_discount[name] = discount
 
     def total_cost(self) -> float:
         total = 0.0
         for product in self.products:
-            type_disc = self.type_discount.get(product.type, 0.0)
+            type_disc = self.name_discount.get(product.name, 0.0)
             price_after_type_discount = product.cost * (1 - type_disc)
             total += price_after_type_discount
 
@@ -39,11 +46,11 @@ class Order:
 
         return total
 
-    def cost_by_type(self, product_type: str) -> float:
+    def cost_by_class(self, product_type: T) -> float:
         total = 0.0
         for product in self.products:
-            if product.type == product_type:
-                type_disc = self.type_discount.get(product_type, 0.0)
+            if product.name == product_type:
+                type_disc = self.name_discount.get(product_type, 0.0)
                 price_after_type_discount = product.cost * (1 - type_disc)
                 total += price_after_type_discount
 
@@ -62,8 +69,8 @@ class Order:
             result += "  Нет добавленных товаров.\n"
 
         result += "  Скидки по типам:\n"
-        if self.type_discount:
-            for typ, disc in self.type_discount.items():
+        if self.name_discount:
+            for typ, disc in self.name_discount.items():
                 result += f"    Тип: {typ}, Скидка: {disc * 100:.1f}%\n"
         else:
             result += "    Нет скидок по типам.\n"
@@ -79,18 +86,20 @@ class Order:
 
 
 if __name__ == "__main__":
-    p1 = Product(type="электроника", name="Смартфон", cost=20000)
-    p2 = Product(type="электроника", name="Ноутбук", cost=50000)
-    p3 = Product(type="одежда", name="Куртка", cost=8000)
+    p1 = Product(name="Смартфон", cost=20000)
+    p2 = T1(cost=50000)
+    p3 = T2(cost=8000)
 
     order = Order()
     order.add_product(p1)
     order.add_product(p2)
     order.add_product(p3)
 
-    order.set_discount_by_type(0.1, "электроника")
+    print(order)
+
+    order.set_discount_by_type(0.1, "Смартфон")
     order.set_discount(0.05)
 
     print(order)
 
-    print(f"Стоимость электроники: {order.cost_by_type('электроника'):.2f}")
+    print(f"Стоимость электроники: {order.cost_by_class('Смартфон'):.2f}")
